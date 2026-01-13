@@ -1,6 +1,6 @@
 package _1_test_260113;
 
-public class Exam_1_2 {
+public class _1_Exam_1_2 {
     public static void main(String[] args) {
         String name = "오태흔";
         int age = 35;
