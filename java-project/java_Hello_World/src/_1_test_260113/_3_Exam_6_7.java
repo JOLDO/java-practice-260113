@@ -32,6 +32,6 @@ public class _3_Exam_6_7 {
         System.out.println("점수 입력 : ");
         System.out.println((scanner.nextInt() >= 60 ? "합격" : "불합격") + " 입니다.");
 
-        scanner.close();
+        scanner.close();    //중요!!!
     }
 }
