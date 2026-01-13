@@ -8,11 +8,23 @@ public class Exam_1_2 {
 
         int x = 100;
         int y = 200;
-        Exam_1_2 e = new Exam_1_2();
-        System.out.println("x * y = " + e.multi(x, y));
+        System.out.println("x * y = " + multi(x, y));
+
+        Person person_1 = new Person("aaa", 111, "bbb");
+        Person person_2 = new Person("ccc", 222, "ddd");
+        System.out.println(introduce(person_1));
+
+        person_1.setName("eee");
+        System.out.println(introduce(person_1));
+        System.out.println(introduce(person_2));
+
     }
 
-    private int multi(int a, int b) {
+    private static int multi(int a, int b) {
         return a * b;
+    }
+
+    private static String introduce(Person person) {
+        return "이름: " + person.getName() + " 나이 : " + person.getAge() + " 주소 : " + person.getAddress();
     }
 }
