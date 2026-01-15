@@ -13,12 +13,12 @@ public class _2_Exam_Case {
         Scanner scanner = new Scanner(System.in);
         int[] arrInt = new int[5];
         int sum = 0;
-        for(int i = 0; i < 5; i++) {
-            System.out.println("숫자" + i);
+        for (int i = 0; i < arrInt.length; i++) {
+            System.out.println("숫자" + (i + 1));
             arrInt[i] = scanner.nextInt();
             sum += arrInt[i];
         }
-        System.out.println("합계: " + sum + ", 평균: " + sum / 5.0);
+        System.out.println("합계: " + sum + ", 평균: " + (double) sum / arrInt.length);
 
         scanner.close();
         /*
@@ -31,14 +31,16 @@ public class _2_Exam_Case {
                 - 줄바꿈을 할 때 : System.out.println();
         */
         int[][] grid = new int[4][4];
-        for(int i = 0; i < 4; i++) {
-            for(int j = 0; j < 4; j++) {
-                if(i == j) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (i == j) {
                     grid[i][j] = 1;
                 } else {
                     grid[i][j] = 0;
                 }
+//                System.out.print(grid[i][j]);
             }
+//            System.out.println();
         }
 
 //        합한 값이 갯수의 -1(반대 대각선)
@@ -52,8 +54,8 @@ public class _2_Exam_Case {
 //            }
 //        }
 
-        for(int[] row: grid) {
-            for(int col: row) {
+        for (int[] row : grid) {
+            for (int col : row) {
                 System.out.print(col);
             }
             System.out.println();
@@ -73,14 +75,14 @@ public class _2_Exam_Case {
             maxVal = num; // 기준값을 현재 숫자로 변경
         }
         */
-        int[] numbers = {100,200,300};
+        int[] numbers = {100, 200, 300};
         System.out.println(getMaxValue(numbers));
     }
 
     private static int getMaxValue(int[] numbers) {
         int maxValue = 0;
-        for(int row: numbers) {
-            if(row > maxValue) {
+        for (int row : numbers) {
+            if (row > maxValue) {
                 maxValue = row;
             }
         }
