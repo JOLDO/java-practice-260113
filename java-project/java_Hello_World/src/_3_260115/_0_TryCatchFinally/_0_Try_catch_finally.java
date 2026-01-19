@@ -1,0 +1,19 @@
+package _3_260115._0_TryCatchFinally;
+
+public class _0_Try_catch_finally {
+    public static void main(String[] args) {
+        // 사용시, 메인 안에 내용만 참고하기.
+        try {
+            System.out.println("실행1: try 구문");
+            int result = 10 / 0; // 실패하는 예시
+        } catch (ArithmeticException e) { // 작은 범위 처리.
+            // 현재는 뭐가 문제인지를 여부를 정확히 알고 있으니, 작은 범위로 처리.
+            // 뭐가 문제가 모를 경우, 1) 각각을 세부적으로 모두 정의 2) 큰 범위로 정의
+            System.out.println("실행2: catch 구문");
+            System.out.println("0으로 나눌 수 없습니다.");
+        } finally {
+            System.out.println("실행3 finally 구문" +
+                    "__try 에서 예외가 발생 하건, 안하건, 무조건 실행되는 구간");
+        }
+    }
+}
