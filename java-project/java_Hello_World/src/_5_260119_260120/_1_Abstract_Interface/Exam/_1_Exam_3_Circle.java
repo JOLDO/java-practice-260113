@@ -1,0 +1,8 @@
+package _5_260119_260120._1_Abstract_Interface.Exam;
+
+public class _1_Exam_3_Circle extends _1_Exam_3_Shape{
+    @Override
+    void draw() {
+        System.out.println("원을 그립니다.");
+    }
+}
