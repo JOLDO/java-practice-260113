@@ -1,27 +1,21 @@
-package _5_260119_260120._2_ManageUser;
+package _6_260121._0_Collections.MemberProject_ArrayList;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
-public class _2_ManageUser {
+public class _0_ManageUser_ArrayList {
     //임시저장파일 추가(파일 이름 미리 지정, 정적(static))
     //파일이름을 미리 지정
     private static final String FILE_NAME = "members.txt";  //회원가입한 유저 데이터 저장팔 파일 이름(고정)
     public static void main(String[] args) {
-        //최대 5명까지 저장 가능한 배열 생성.
-        //수정
-//        ArrayList<_2_NormalMember> members = loadMembers();
-        _2_MemberBase[] members = new _2_MemberBase[5];     //5명까지만 만들것
-        int count = 0;	//현재 저장된 회원 수(배열 인덱스 관리용)
+        //다형성 적용 : List(인터페이스) 큰 타입으로 선선, = ArrayList 생성    //map과 set로 list의 하위라서 다형성을 위해
+        List<_0_MemberBase_ArrayList> members = new ArrayList<>();
+        loadMembers(members);
 
         //프로그램 시작시 회원 정보 불러오기
-        //수정
-//        if(members != null) {
-//            count = members.size();
-//        }
-        count = loadMembers(members);   //파일로 저장해 놓은 인원 수 대입
-        _2_MemberBase loginMemeber = null;  //실습2 수정1: 로그인한 유저가 있는지 확인할 변수를 처음에 없으므르 null로 설정
+        _0_MemberBase_ArrayList loginMemeber = null;  //실습2 수정1: 로그인한 유저가 있는지 확인할 변수를 처음에 없으므르 null로 설정
         //콘솔에 입력 내용 불러오는 도구.
         Scanner sc = new Scanner(System.in);
 
@@ -51,13 +45,6 @@ public class _2_ManageUser {
             }
             switch (choice) {
                 case 1:	//회원가입
-                    //count, 현재 가입된 회원 숫자
-                    //members.length : 5개 고정 길이, 왜? 배열이라서, 고정.
-                    //수정
-                    if(count >= members.length) {
-                        System.out.println("정원초과, 가입 불가입니다.");
-                        break;
-                    }
                     System.out.println("이름 : ");
                     String name = sc.nextLine();
 
@@ -72,19 +59,15 @@ public class _2_ManageUser {
                         int age = Integer.parseInt(sc.nextLine());
 
                         //다형성 활용 : 부모 타입 배열에 자식 객체 저장.
-                        _2_NormalMember newMember = new _2_NormalMember(name, email, password, age);    //실습 수정8: 생성자의 매개변수에 password 추가
-                        //배열에 저장.
-                        //수정
-//                        members.add(newMember);
-                        members[count] = newMember;
+                        _0_NormalMember_ArrayList newMember = new _0_NormalMember_ArrayList(name, email, password, age);    //실습 수정8: 생성자의 매개변수에 password 추가
+
+                        members.add(newMember);
                         //인터페이스 메서드 호출
                         newMember.join();
-
                         //인덱스 증가, 현재 가입할 인원 증가
-                        count++;
 
                         //회원가입시, 메모리상의 내용을 파일에 저장하는 메서드를 이용
-                        saveMembers(members, count);
+                        saveMembers(members);
                     } catch (NumberFormatException e) {
                         System.out.println("숫자를 입력하세요.");
                     } finally {
@@ -92,14 +75,12 @@ public class _2_ManageUser {
                     }
 
                 case 2:
-                    if(count == 0) {
+                    if(members.size() == 0) {
                         System.out.println("가입된 회원이 없습니다.");
                     } else {
-                        System.out.println("\n 총 회원수 : " + count + "명입니다.");
-                        for(int i = 0; i < count; i++) {
-                            //수정
-//                            members.get(i).showInfo();
-                            members[i].showInfo();  //다형성(오버라이딩된 메서드 실행)
+                        System.out.println("\n 총 회원수 : " + members.size() + "명입니다.");
+                        for(_0_MemberBase_ArrayList member : members) {
+                            member.showInfo();  //다형성(오버라이딩된 메서드 실행)
                         }
                     }
                     break;
@@ -119,12 +100,10 @@ public class _2_ManageUser {
                         boolean isLogin = false;
 
                         //회원정보가 들어있는 배열 전체 순회
-                        for (int i = 0; i < count; i++) {
+                        for(_0_MemberBase_ArrayList member : members) {
                             //임시 메모리에 저장된 회원의 이메일과 패스워드 확인 절차
                             //저장된 회원 한명씩 꺼내서, member에 담아두고, 입력된 이메일, 패스워드와 불러운 이메일, 패스워드를 비교
                             //수정
-//                            _2_MemberBase member = members.get(i);
-                            _2_MemberBase member = members[i];
                             //주의 사항, 문자열 비교시에는 문자열.equals(비교문자열) 사용
                             if (member.getEmail().equals(inputEmail) && member.getPassword().equals(inputPassword)) {
                                 isLogin = true;
@@ -157,122 +136,15 @@ public class _2_ManageUser {
     //준비물:
     //1)메모리 상에 저장된 멤버들 배열 members
     //2)가입된 인원수 count
-    public static void saveMembers(_2_MemberBase[] members, int count) {
-        //BufferedWriter: 버퍼를 사용해서 파일 쓰기 속도를 높여줌
-        BufferedWriter bw = null;
-        //try ~ catch ~ finally 무조건 사용해야 함
-        //1)파일 입출력
-        //2)네트워크 통신
-        try {
-            //스트림 생성.
-            //new FileWriter(FILE_NAME) : 우리가 지정한 파일에 쓰겠다.
-            //new BufferedWriter(여기) : "여기" 라는 내용을 좀더 빠르게 쓰겠다.
-            bw = new BufferedWriter(new FileWriter(FILE_NAME));
-
-            //members[i] 배열이고, 메모리상에 저장된 멤버들
-            //반복문을 이용해서, 메모리상에 저장된 멤버들을 members.txt 파일에 기록하는 과정
-            for (int i = 0; i < count; i++) {
-//                _2_MemberBase member = members[i];
-                _2_MemberBase member = members[i];
-                //파일에 저장 형식: 이름, 이메일, 패스워드, 나이(구분자: 쉼표로 구분, csv)
-                //기존 _2_MemberBase클래스에 이름, 이메일, 패스워드, 나이의 getter 생성
-                String line = member.getName() + "," + member.getEmail() + "," + member.getPassword() + "," + member.getAge();
-                //파일에 한줄씩 기록
-                bw.write(line);
-                //줄바꿈
-                bw.newLine();
-            }
-            System.out.println("파일 저장 완료 " + FILE_NAME);
-
-        } catch (IOException ioe) {
-            System.out.println("오류가 발생했습니다. 원인은: " + ioe.getMessage());
-        } finally {
-            //bw 자원 반납
-            if(bw != null) {
-                try {
-                    bw.close();
-                } catch (IOException ioe) {
-                    System.out.println("오류 발생, 파일 닫기 실패.");
-                }
-            }
-        }
-    }
 
     //임시저장파일 추가(불러오는 기능 메서드 만들기, 정적(static)
     //준비물:
     //1)메모리에 저장된 배열
-    public static int loadMembers(_2_MemberBase[] members) {
-        //물리파일 : members.txt 파일에 접근하고, 가져오는 기능을 담당하는 클래스 이용
-        //담당 클래스 : File
-        //스캐너 도구를 사용하듯이 파일 도구를 사용
-        File file = new File(FILE_NAME);
-
-        //유효성 체크
-        //파일이 없다면, 해당 기능 실행을 중지
-        if(!file.exists()) {    //해당 파일이 없을때
-            return 0;
-        }
-
-        //실제 불러올 멤버의 숫자(상태 변수)
-        int loadCount = 0;
-        //버퍼를 이용해서 빠르게 불러오기
-        BufferedReader br = null;
-
-        try {
-            //new FileReader(file) : 물리 파일 읽는 도구
-            //new BufferedReader : 빨리 읽어주는 도구
-            //br : 파일에서 읽었던 내용이 모두 br에 들어가 있음(내용물)
-            br = new BufferedReader(new FileReader(FILE_NAME));
-
-            //파일에서 읽어온 내용을 한줄씩 임의로 담아둘 변수
-            String line;
-            //br.readLine() : 전체 내용중에서 한줄 읽음
-            while((line = br.readLine()) != null) {
-                //유효성 기본 체크, 읽을때 배열의 크기 이상을 읽지 못하게 막기
-                //loadCount : 6, members : 회원가입된 인원 5명 이라면 문제가 생기기때문에 막음
-                if(loadCount >= members.length) {
-                    break;
-                }
-                //정상적으로 불러오는 경우
-                //쉼표를 기준으로 데이터를 불러오기
-                //예시) 이름,이메일,비밀번호,나이에서 ,를 제거후 배열로 담음
-                //String[] data = { "이름", "이메일", "비밀번호", "나이" }
-                String[] data = line.split(",");
-                if(data.length == 4) {
-                    String name = data[0];
-                    String email = data[1];
-                    String password = data[2];
-                    //Integer.parseInt : 문자열 -> 숫자로 반환
-                    int age = Integer.parseInt(data[3]);
-
-                    //파일에서 읽어온 내용을 -> 메모리 상의 배열에 담기
-                    //name, email, password, age -> 객체에 담기 -> 사람 수만큼 배열로 담기
-                    members[loadCount] = new _2_NormalMember(name, email, password, age);
-                    loadCount++;
-                }
-            }
-            System.out.println("파일 불러오기 완료: " + loadCount + "명의 회원정보를 불러옴.");
-        } catch (IOException ioe) {
-            System.out.println("파일 불러오기 실패, 원인은: " + ioe.getMessage());
-        } finally {
-            //자원 반납
-            if(br != null) {
-                try {
-                    br.close();
-                } catch (IOException ioe) {
-                    System.out.println("파일 닫기 실패");
-                }
-            }
-        }
-        return loadCount;   //등록된 사람 수를 카운트 하는 곳에 값을 넣어주기 위해 필요(5칸짜리로 만들어 놓아서 length로는 확인 불가능해서)
-    }
-
-    public static void saveMembers(ArrayList<_2_NormalMember> members, int count) {
+    public static void saveMembers(List<_0_MemberBase_ArrayList> members) {
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter(FILE_NAME));
-            for (int i = 0; i < count; i++) {
-                _2_MemberBase member = members.get(i);
+            for (_0_MemberBase_ArrayList member : members) {
                 String line = member.getName() + "," + member.getEmail() + "," + member.getPassword() + "," + member.getAge();
                 bw.write(line);
                 bw.newLine();
@@ -292,15 +164,12 @@ public class _2_ManageUser {
         }
     }
 
-    public static ArrayList<_2_NormalMember> loadMembers() {
+    public static void loadMembers(List<_0_MemberBase_ArrayList> members) {
         File file = new File(FILE_NAME);
 
         if(!file.exists()) {
-            return new ArrayList<>();
+            return;
         }
-
-        int loadCount = 0;
-        ArrayList<_2_NormalMember> memberList = new ArrayList<>();
         BufferedReader br = null;
 
         try {
@@ -314,11 +183,10 @@ public class _2_ManageUser {
                     String email = data[1];
                     String password = data[2];
                     int age = Integer.parseInt(data[3]);
-                    memberList.add(new _2_NormalMember(name, email, password, age));
-                    loadCount++;
+                    members.add(new _0_NormalMember_ArrayList(name, email, password, age));
                 }
             }
-            System.out.println("파일 불러오기 완료: " + loadCount + "명의 회원정보를 불러옴.");
+            System.out.println("파일 불러오기 완료: " + members.size() + "명의 회원정보를 불러옴.");
         } catch (IOException ioe) {
             System.out.println("파일 불러오기 실패, 원인은: " + ioe.getMessage());
         } finally {
@@ -331,6 +199,5 @@ public class _2_ManageUser {
                 }
             }
         }
-        return memberList;
     }
 }
