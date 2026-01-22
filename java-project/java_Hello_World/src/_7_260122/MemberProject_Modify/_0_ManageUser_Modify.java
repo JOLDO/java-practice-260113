@@ -1,19 +1,16 @@
-package _6_260121._0_Collections.MemberProject_HashMap;
+package _7_260122.MemberProject_Modify;
 
 import java.io.*;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
-public class _0_ManageUser_HashMap_Logout {
+public class _0_ManageUser_Modify {
     //임시저장파일 추가(파일 이름 미리 지정, 정적(static))
     //파일이름을 미리 지정
     private static final String FILE_NAME = "members.txt";  //회원가입한 유저 데이터 저장팔 파일 이름(고정)
     public static void main(String[] args) {
         //다형성 적용 : List(인터페이스) 큰 타입으로 선선, = ArrayList 생성    //map과 set로 list의 하위라서 다형성을 위해
 //        List<_0_MemberBase_HashMap> members = new ArrayList<>();
-        Map<String, _0_MemberBase_HashMap> members = new HashMap<>();
+        Map<String, _0_MemberBase_Modify> members = new HashMap<>();
         /*
         members = members.entrySet().stream()
                         .sorted(Map.Entry.comparingByKey()) //키 값으로 오름차순 정렬
@@ -27,19 +24,19 @@ public class _0_ManageUser_HashMap_Logout {
         loadMembers(members);
 
         //프로그램 시작시 회원 정보 불러오기
-        _0_MemberBase_HashMap loginMember = null;  //실습2 수정1: 로그인한 유저가 있는지 확인할 변수를 처음에 없으므르 null로 설정
+        _0_MemberBase_Modify loginMember = null;  //실습2 수정1: 로그인한 유저가 있는지 확인할 변수를 처음에 없으므르 null로 설정
         //콘솔에 입력 내용 불러오는 도구.
         Scanner sc = new Scanner(System.in);
 
         //메뉴 반복문 이용해서 그려보기.
         while(true) {
-            System.out.println("\n=======회원 관리 시스템 ver 2.0=======(로그아웃 추가)");
+            System.out.println("\n=======회원 관리 시스템 ver 2.2=======(수정기능 추가)");
             if(loginMember != null) {  //실습2 수정2: 로그인 한 유저 데이터가 있으면
                 System.out.println("로그인한 유저 : " + loginMember.getEmail());
-                System.out.println("1.회원가입 2.목록조회 3.로그아웃 4.종료");
+                System.out.println("1.회원가입 2.목록조회 3.로그아웃 4.회원수정 5.종료");
             } else {
 //                System.out.println("1.회원가입 2.목록조회 3.종료");
-                System.out.println("1.회원가입 2.목록조회 3.로그인 4.종료"); //실습 수정1: 메뉴 변경
+                System.out.println("1.회원가입 2.목록조회 3.로그인 4.회원수정 5.종료"); //실습 수정1: 메뉴 변경
             }
             System.out.println("메뉴 선택>>");
 
@@ -76,7 +73,7 @@ public class _0_ManageUser_HashMap_Logout {
                         int age = Integer.parseInt(sc.nextLine());
 
                         //다형성 활용 : 부모 타입 배열에 자식 객체 저장.
-                        _0_NormalMember_HashMap newMember = new _0_NormalMember_HashMap(name, email, password, age);    //실습 수정8: 생성자의 매개변수에 password 추가
+                        _0_NormalMember_Modify newMember = new _0_NormalMember_Modify(name, email, password, age);    //실습 수정8: 생성자의 매개변수에 password 추가
 
                         members.put(email, newMember);
                         //인터페이스 메서드 호출
@@ -99,8 +96,8 @@ public class _0_ManageUser_HashMap_Logout {
                         members.entrySet().stream()
 //                                .sorted(Map.Entry.comparingByKey()) //키 기준 오픔차순
 //                                .sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))  //키 기준 내림차순
-                                .sorted(Map.Entry.comparingByValue(Comparator.comparing(_0_MemberBase_HashMap::getAge)  //주 기준 나이순 오름차순
-                                        .thenComparing(_0_MemberBase_HashMap::getName, Comparator.reverseOrder()))) //부 기준 이름순 내림차순
+                                .sorted(Map.Entry.comparingByValue(Comparator.comparing(_0_MemberBase_Modify::getAge)  //주 기준 나이순 오름차순
+                                        .thenComparing(_0_MemberBase_Modify::getName, Comparator.reverseOrder()))) //부 기준 이름순 내림차순
                                 .forEach(e -> e.getValue().showInfo()); //각각 showInfo()로 사용해줌
                         //이렇게 정렬할수 있음
 //                        for(_0_MemberBase_HashMap member : members.values()) {
@@ -123,7 +120,7 @@ public class _0_ManageUser_HashMap_Logout {
                         //회원정보가 들어있는 배열 전체 순회
                         //for(_0_MemberBase_HashMap member : members.values()) {
                         if(members.containsKey(inputEmail)) {
-                            _0_MemberBase_HashMap member = members.get(inputEmail);
+                            _0_MemberBase_Modify member = members.get(inputEmail);
                             //임시 메모리에 저장된 회원의 이메일과 패스워드 확인 절차
                             //저장된 회원 한명씩 꺼내서, member에 담아두고, 입력된 이메일, 패스워드와 불러운 이메일, 패스워드를 비교
                             //수정
@@ -146,6 +143,58 @@ public class _0_ManageUser_HashMap_Logout {
 
                 //종료 기능 3에서 4로 변경
                 case 4:
+                    //회원 수정 기능 추가(로그인 했을경우만)
+                    if(loginMember == null) {
+                        System.out.println("로그인 이후에 수정할 수 있습니다.");
+                    } else {
+                        System.out.println("\n========회원 정보 수정=========");
+                        System.out.println("수정할 항목을 선택하세요.");
+                        System.out.println("1.비밀번호 2.이름 3.나이 4.취소");
+                        System.out.println("입력>>");
+                        String choiceNumber = sc.nextLine();
+                        boolean isUpdated = false;
+
+                        switch (choiceNumber) {
+                            case "1":
+                                System.out.println("새로운 비밀번호 입력: ");
+                                String newPw = sc.nextLine();
+                                loginMember.setPassword(newPw);
+                                isUpdated = true;
+                                break;
+
+                            case "2":
+                                System.out.println("새로운 이름 입력: ");
+                                String newName = sc.nextLine();
+                                loginMember.setPassword(newName);
+                                isUpdated = true;
+                                break;
+
+                            case "3":
+                                System.out.println("새로운 나이 입력: ");
+                                try {
+                                    int newAge = Integer.parseInt(sc.nextLine());
+                                    loginMember.setAge(newAge);
+                                    isUpdated = true;
+                                } catch (NumberFormatException e) {
+                                    System.out.println("잘못된 나이 입력입니다.");
+                                }
+                                break;
+
+                            case "4":
+                                System.out.println("수정 취소");
+                                break;
+
+                            default:
+                                System.out.println("잘못된 입력입니다.");
+                        }
+                        if(isUpdated) {
+                            saveMembers(members);
+                        }
+
+                    }
+                    break;
+
+                case 5:
                     System.out.println("프로그램을 종료합니다.");
                     sc.close(); //스캐너 자원반납
                     return;
@@ -164,11 +213,11 @@ public class _0_ManageUser_HashMap_Logout {
     //임시저장파일 추가(불러오는 기능 메서드 만들기, 정적(static)
     //준비물:
     //1)메모리에 저장된 배열
-    public static void saveMembers(Map<String, _0_MemberBase_HashMap> members) {
+    public static void saveMembers(Map<String, _0_MemberBase_Modify> members) {
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter(FILE_NAME));
-            for (_0_MemberBase_HashMap member : members.values()) {
+            for (_0_MemberBase_Modify member : members.values()) {
                 String line = member.getName() + "," + member.getEmail() + "," + member.getPassword() + "," + member.getAge();
                 bw.write(line);
                 bw.newLine();
@@ -188,7 +237,7 @@ public class _0_ManageUser_HashMap_Logout {
         }
     }
 
-    public static void loadMembers(Map<String, _0_MemberBase_HashMap> members) {
+    public static void loadMembers(Map<String, _0_MemberBase_Modify> members) {
         File file = new File(FILE_NAME);
 
         if(!file.exists()) {
@@ -207,7 +256,7 @@ public class _0_ManageUser_HashMap_Logout {
                     String email = data[1];
                     String password = data[2];
                     int age = Integer.parseInt(data[3]);
-                    members.put(email, new _0_NormalMember_HashMap(name, email, password, age));
+                    members.put(email, new _0_NormalMember_Modify(name, email, password, age));
                 }
             }
             System.out.println("파일 불러오기 완료: " + members.size() + "명의 회원정보를 불러옴.");
