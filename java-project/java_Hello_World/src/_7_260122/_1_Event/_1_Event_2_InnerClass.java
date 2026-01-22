@@ -27,4 +27,3 @@ public class _1_Event_2_InnerClass {
         new _1_Event_2_InnerClass();
     }
 }
-}
