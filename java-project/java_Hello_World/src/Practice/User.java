@@ -9,7 +9,7 @@ public class User {
     private boolean isLock;
 
     public User(String email, String password, String name, int age) {
-        this(email, name, password, age, 0, false);
+        this(email, password, name, age, 0, false);
     }
 
     public User(String email, String password, String name, int age, int lockCount, boolean isLock) {
@@ -42,5 +42,9 @@ public class User {
         System.out.println("나이 : " + age);
         System.out.println("이용불가 : " + isLock);
         System.out.println("==================================");
+    }
+
+    public String infoStr() {
+        return String.format("|||   이름 : %s | 나이 : %d세 | 이메일 : %s | 이용불가 : %b   |||", name, age, email, isLock);
     }
 }
