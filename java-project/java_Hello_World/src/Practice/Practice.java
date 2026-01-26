@@ -11,19 +11,24 @@ import java.util.Map;
 
 public class Practice extends JFrame {
     private final String FILE_NAME = Path.of("src", Practice.class.getPackageName().replace(".", File.separator), "members.txt").toString();   //회원가입한 유저 데이터 저장팔 파일 이름(고정)
-    private HashMap<String, User> map = new HashMap<>();
     private User loginUser = null;
-    private JLabel statusLabel = new JLabel("-로그아웃-", SwingConstants.CENTER);
+    private final JLabel statusLabel = new JLabel("-로그아웃-", SwingConstants.CENTER);
     private JTextArea textArea;
-    private JPanel btnPanel;
-    private JButton signUpBtn, listBtn, loginBtn, editBtn, searchBtn, deleteBtn, exitBtn;
+    private final JButton signUpBtn = new JButton("회원가입");
+    private final JButton listBtn = new JButton("회원목록");
+    private final JButton loginBtn = new JButton("로그인");
+    private final JButton editBtn = new JButton("회원수정");
+    private final JButton searchBtn = new JButton("회원검색");
+    private final JButton deleteBtn = new JButton("회원삭제");
+    private final JButton exitBtn = new JButton("종료");
+    private final JButton[] buttons = { signUpBtn, listBtn, loginBtn, editBtn, searchBtn, deleteBtn, exitBtn };
 
     public Practice() {
-        super("UI연습용");
-
+        super("UI 연습용");
+        HashMap<String, User> map = new HashMap<>();
         loadFile(map);
 
-        initView();
+        initView(map);
         updateStateButton();
 
         setSize(600, 500);
@@ -32,7 +37,7 @@ public class Practice extends JFrame {
         setVisible(true);
     }
 
-    private void initView() {
+    private void initView(HashMap<String, User> map) {
         setLayout(new BorderLayout());
         add(statusLabel, BorderLayout.NORTH);
 
@@ -41,50 +46,38 @@ public class Practice extends JFrame {
         textArea.setFont(new Font("Apple SD Gothic Neo", Font.PLAIN, 14));
         add(new JScrollPane(textArea), BorderLayout.CENTER);
 
-        btnPanel = new JPanel(new GridLayout(2, 4, 5, 5));
-        signUpBtn = new JButton("회원가입");
-        listBtn = new JButton("회원목록");
-        loginBtn = new JButton("로그인");
-        editBtn = new JButton("회원수정");
-        searchBtn = new JButton("회원검색");
-        deleteBtn = new JButton("회원삭제");
-        exitBtn = new JButton("종료");
+        JPanel btnPanel = new JPanel(new GridLayout(2, 4, 5, 5));
 
-        signUpBtn.addActionListener(new ActionHandler());
-        listBtn.addActionListener(new ActionHandler());
-        loginBtn.addActionListener(new ActionHandler());
-        editBtn.addActionListener(new ActionHandler());
-        searchBtn.addActionListener(new ActionHandler());
-        deleteBtn.addActionListener(new ActionHandler());
-        exitBtn.addActionListener(new ActionHandler());
-
-        btnPanel.add(signUpBtn);
-        btnPanel.add(listBtn);
-        btnPanel.add(loginBtn);
-        btnPanel.add(editBtn);
-        btnPanel.add(searchBtn);
-        btnPanel.add(deleteBtn);
-        btnPanel.add(exitBtn);
+        ActionHandler handler = new ActionHandler(map);
+        for(JButton button : buttons) {
+            button.addActionListener(handler);
+            btnPanel.add(button);
+        }
 
         add(btnPanel, BorderLayout.SOUTH);
     }
 
     private class ActionHandler implements ActionListener {
+        private final HashMap<String, User> map;
+        private ActionHandler(HashMap<String, User> map) {
+            this.map = map;
+        }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             Object source = e.getSource();
             if(source == signUpBtn) {
                 if(loginUser == null) {
-                    signUp();
+                    signUp(map);
                 } else {
                     printText("로그아웃을 먼저 해주세요.");
                 }
             } else if(source == listBtn) {
                 if(loginUser == null)   textArea.setText("");
-                listUp();
+                listUp(map);
             } else if(source == loginBtn) {
                 if(loginUser == null) {
-                    login();
+                    login(map);
                 } else {
                     logout(false);
                 }
@@ -92,19 +85,19 @@ public class Practice extends JFrame {
                 if(loginUser == null) {
                     printText("로그인을 먼저 해주세요.");
                 } else {
-                    edit();
+                    edit(map);
                 }
             } else if(source == searchBtn) {
                 if(loginUser == null) {
                     printText("로그인을 먼저 해주세요.");
                 } else {
-                    search();
+                    search(map);
                 }
             } else if(source == deleteBtn) {
                 if(loginUser == null) {
                     printText("로그인을 먼저 해주세요.");
                 } else {
-                    delete();
+                    delete(map);
                 }
             } else if(source == exitBtn) {
                 System.exit(0);
@@ -112,7 +105,7 @@ public class Practice extends JFrame {
         }
     }
 
-    private void signUp() {
+    private void signUp(HashMap<String, User> map) {
         JTextField nameField = new JTextField();
         JTextField emailField = new JTextField();
         JPasswordField passwordField = new JPasswordField();
@@ -144,7 +137,7 @@ public class Practice extends JFrame {
         }
     }
 
-    private void listUp() {
+    private void listUp(HashMap<String, User> map) {
         if(map.isEmpty()) {
             printText("회원이 없습니다.");
             return;
@@ -160,7 +153,7 @@ public class Practice extends JFrame {
         textArea.append("==============================================================\n");
     }
 
-    private void login() {
+    private void login(HashMap<String, User> map) {
         JTextField emailField = new JTextField();
         JPasswordField passwordField = new JPasswordField();
         Object[] loginComp = new Object[] {
@@ -223,7 +216,7 @@ public class Practice extends JFrame {
         }
     }
 
-    private void edit() {
+    private void edit(HashMap<String, User> map) {
         JPanel inputPanel = new JPanel(new BorderLayout());
         JPasswordField passwordField = new JPasswordField();
         JTextField inputField = new JTextField();
@@ -282,7 +275,7 @@ public class Practice extends JFrame {
         }
     }
 
-    private void search() {
+    private void search(HashMap<String, User> map) {
         ButtonGroup btnGroup = new ButtonGroup();
         JRadioButton emailBtn = new JRadioButton("이메일");
         JRadioButton nameBtn = new JRadioButton("이름");
@@ -322,7 +315,7 @@ public class Practice extends JFrame {
 
     }
 
-    private void delete() {
+    private void delete(HashMap<String, User> map) {
         JPasswordField passwordField = new JPasswordField();
         Object[] deleteComp = new Object[] {
                 "비밀번호 : ", passwordField
@@ -358,7 +351,7 @@ public class Practice extends JFrame {
                 bw.newLine();
             }
         } catch (IOException e) {
-
+            printText("파일 저장에 실패했습니다.");
         }
     }
 
@@ -376,7 +369,7 @@ public class Practice extends JFrame {
                 }
             }
         } catch (IOException e) {
-
+            printText("파일 읽어오기에 실패했습니다.");
         }
     }
 }
