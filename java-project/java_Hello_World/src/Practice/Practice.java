@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Practice extends JFrame {
     private final String FILE_NAME = Path.of("src", Practice.class.getPackageName().replace(".", File.separator), "members.txt").toString();   //회원가입한 유저 데이터 저장팔 파일 이름(고정)
@@ -150,9 +151,12 @@ public class Practice extends JFrame {
         }
 
         textArea.append("==============================================================\n");
-        for(User user : map.values()) {
+        map.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(e -> {
+            printText(e.getValue().infoStr());
+        });
+        /*for(User user : map.values()) {
             printText(user.infoStr());
-        }
+        }*/
         textArea.append("==============================================================\n");
     }
 
@@ -348,13 +352,11 @@ public class Practice extends JFrame {
     }
 
     private void saveFile(HashMap<String, User> map) {
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME));
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for(User user : map.values()) {
                 bw.write(user.getEmail() + "," + user.getPassword() + "," + user.getName() + "," + user.getAge() + "," + user.getLockCount() + "," + user.getIsLock());
                 bw.newLine();
             }
-            bw.close();
         } catch (IOException e) {
 
         }
@@ -365,13 +367,7 @@ public class Practice extends JFrame {
         if(!file.exists()) {
             return;
         }
-//        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-//
-//        } catch (IOException e) {
-//
-//        } //이런식으로 쓰면 닫을 필요 없이 알아서 닫아줌
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(FILE_NAME));
+        try(BufferedReader br = new BufferedReader(new FileReader(FILE_NAME))) {
             String line;
             while((line = br.readLine()) != null) {
                 String[] data = line.split(",");
@@ -379,7 +375,6 @@ public class Practice extends JFrame {
                     map.put(data[0], new User(data[0], data[1], data[2], Integer.parseInt(data[3]), Integer.parseInt(data[4]), Boolean.parseBoolean(data[5])));
                 }
             }
-            br.close();
         } catch (IOException e) {
 
         }
