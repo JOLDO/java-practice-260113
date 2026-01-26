@@ -5,10 +5,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 public class Practice extends JFrame {
-    private final String FILE_NAME = "members.txt";
+    private final String FILE_NAME = Path.of("src", Practice.class.getPackageName().replace(".", File.separator), "members.txt").toString();   //회원가입한 유저 데이터 저장팔 파일 이름(고정)
     private HashMap<String, User> map = new HashMap<>();
     private User loginUser = null;
     private JLabel statusLabel = new JLabel("-로그아웃-", SwingConstants.CENTER);
@@ -18,12 +19,15 @@ public class Practice extends JFrame {
 
     public Practice() {
         super("UI연습용");
+
         loadFile(map);
 
         initView();
+        updateStateButton();
 
         setSize(600, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
@@ -172,8 +176,7 @@ public class Practice extends JFrame {
                     printText("로그인에 성공했습니다.");
                     loginUser = attempedUser;
                     attempedUser.setLockCount(0);
-                    statusLabel.setText("-" + loginUser.getName() + "님 로그인-");
-                    loginBtn.setText("로그아웃");
+                    updateStateButton();
                 } else {
                     printText("로그인에 실패했습니다.");
                     attempedUser.setLockCount(attempedUser.getLockCount() + 1);
@@ -189,14 +192,25 @@ public class Practice extends JFrame {
     }
 
     private void logout(boolean deleteFlag) {
-        statusLabel.setText("-로그아웃-");
-        loginBtn.setText("로그인");
         if(deleteFlag) {
             printText("삭제되었습니다.");
         } else {
             printText("로그아웃되었습니다.");
         }
         loginUser = null;
+        updateStateButton();
+    }
+
+    private void updateStateButton() {
+        if(loginUser == null) {
+            statusLabel.setText("-로그아웃-");
+            loginBtn.setText("로그인");
+            editBtn.setEnabled(false);
+        } else {
+            statusLabel.setText("-" + loginUser.getName() + "님 로그인-");
+            loginBtn.setText("로그아웃");
+            editBtn.setEnabled(true);
+        }
     }
 
     private void edit() {
@@ -541,10 +555,15 @@ public class Practice extends JFrame {
     }
 
     private void loadFile(HashMap<String, User> map) {
-        File file = new File("members.txt");
+        File file = new File(FILE_NAME);
         if(!file.exists()) {
             return;
         }
+//        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+//
+//        } catch (IOException e) {
+//
+//        } //이런식으로 쓰면 닫을 필요 없이 알아서 닫아줌
         try {
             BufferedReader br = new BufferedReader(new FileReader(FILE_NAME));
             String line;
@@ -554,6 +573,7 @@ public class Practice extends JFrame {
                     map.put(data[0], new User(data[0], data[1], data[2], Integer.parseInt(data[3]), Integer.parseInt(data[4]), Boolean.parseBoolean(data[5])));
                 }
             }
+            br.close();
         } catch (IOException e) {
 
         }

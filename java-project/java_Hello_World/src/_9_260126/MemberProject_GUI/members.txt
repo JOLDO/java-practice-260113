@@ -1,0 +1,3 @@
+손민,bbb@naver.com,bbb,2
+오태흔,aaa@naver.com,aaa,1
+김종원,ccc@naver.com,ccc,1
